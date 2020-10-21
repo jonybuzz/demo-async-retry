@@ -35,7 +35,7 @@ public class ApplicationTests {
                 log.info("Saludo recibido: " + saludoFuturo.get());
                 break;
             }
-            System.out.println("Sigo esperando saludo...");
+            log.info("Sigo esperando saludo...");
             Thread.sleep(500);
         }
     }
