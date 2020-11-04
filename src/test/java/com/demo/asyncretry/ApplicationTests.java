@@ -40,4 +40,8 @@ public class ApplicationTests {
         }
     }
 
+    @Test
+    public void testHastaQueAnde() {
+        negocioService.hastaQueAnde(5);
+    }
 }

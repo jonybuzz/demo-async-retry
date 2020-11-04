@@ -17,22 +17,25 @@ import org.springframework.retry.support.RetryTemplate;
 @EnableRetry
 public class RetryConfig {
 
-    @Bean
-    public RetryTemplate consultaEstadoCredinRetryTemplate(
-            @Value("${app.reintento.cantidad-max}") Integer cantidadMaximaIntentos) {
+    @Value("${app.reintento.cantidad-max}")
+    Integer cantidadMaximaIntentos;
 
-        ExponentialBackOffPolicy politicaDeEspera = new ExponentialBackOffPolicy();
-        politicaDeEspera.setInitialInterval(200L);
+    @Bean
+    public RetryTemplate miRetryTemplate() {
+
+        ExponentialBackOffPolicy politicaDeEsperaEntreReintentos = new ExponentialBackOffPolicy();
+        politicaDeEsperaEntreReintentos.setInitialInterval(200L);
 
         SimpleRetryPolicy politicaDeReintento = new SimpleRetryPolicy(cantidadMaximaIntentos);
-//        Se pueden especificar las excepciones que causar un reintento
+        
+//        Se pueden especificar las excepciones que causan un reintento
 //        SimpleRetryPolicy politicaDeReintento = new SimpleRetryPolicy(cantidadMaximaIntentos, hashMap);
 
         RetryListener[] listeners = {new LogListener()};
 
         //RETRY TEMPLATE
         RetryTemplate retryTemplate = new RetryTemplate();
-        retryTemplate.setBackOffPolicy(politicaDeEspera);
+        retryTemplate.setBackOffPolicy(politicaDeEsperaEntreReintentos);
         retryTemplate.setRetryPolicy(politicaDeReintento);
         retryTemplate.setListeners(listeners);
 
@@ -44,8 +47,8 @@ public class RetryConfig {
 
         @Override
         public <T, E extends Throwable> void onError(RetryContext context, RetryCallback<T, E> callback, Throwable throwable) {
-            log.warn("Reintentando consulta...");
-            log.debug("Error que produjo reintento:", throwable);
+            log.warn("Reintentando consulta " + context.getRetryCount() + "...");
+            log.debug("Error que produjo reintento: " + throwable);
         }
 
     }
