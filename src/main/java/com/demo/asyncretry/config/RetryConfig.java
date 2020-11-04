@@ -1,5 +1,7 @@
 package com.demo.asyncretry.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -25,10 +27,15 @@ public class RetryConfig {
 
         ExponentialBackOffPolicy politicaDeEsperaEntreReintentos = new ExponentialBackOffPolicy();
         politicaDeEsperaEntreReintentos.setInitialInterval(200L);
+        politicaDeEsperaEntreReintentos.setMultiplier(2);
 
         SimpleRetryPolicy politicaDeReintento = new SimpleRetryPolicy(cantidadMaximaIntentos);
+//        SimpleRetryPolicy politicaDeReintento = new SimpleRetryPolicy(4);
         
-//        Se pueden especificar las excepciones que causan un reintento
+//        Se pueden especificar las excepciones que causan un reintento y cuales no
+//        Map<Class<? extends Throwable>, Boolean> hashMap = new HashMap<>();
+//        hashMap.put(IllegalArgumentException.class, true);
+//        hashMap.put(NullPointerException.class, false);
 //        SimpleRetryPolicy politicaDeReintento = new SimpleRetryPolicy(cantidadMaximaIntentos, hashMap);
 
         RetryListener[] listeners = {new LogListener()};
